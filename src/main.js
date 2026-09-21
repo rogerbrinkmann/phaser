@@ -3,10 +3,66 @@ import './style.css'
 
 const GAME_WIDTH = 960
 const GAME_HEIGHT = 600
-const PAD_LEFT = 710
-const PAD_RIGHT = 850
-const PAD_Y = 462
-const PAD_CENTER = (PAD_LEFT + PAD_RIGHT) / 2
+const LEVELS = [
+  {
+    name: 'LOWLAND APPROACH',
+    sector: '07-A',
+    padName: 'PAD 03',
+    gravity: 34,
+    gravityDisplay: '1.62',
+    fuel: 100,
+    fuelBurnRate: 15,
+    start: { x: 174, y: 112 },
+    scoreBonus: 1000,
+    landing: { left: 710, right: 850, y: 462, horizontal: 52, vertical: 72, angle: 0.22, tolerance: '± 13°' },
+    terrain: [
+      { x: 0, y: 520 }, { x: 90, y: 498 }, { x: 160, y: 530 }, { x: 250, y: 470 },
+      { x: 350, y: 510 }, { x: 440, y: 435 }, { x: 530, y: 490 }, { x: 620, y: 455 },
+      { x: 710, y: 462 }, { x: 850, y: 462 }, { x: 885, y: 510 }, { x: GAME_WIDTH, y: 486 },
+    ],
+    ridges: [[68, 532, 91, 514], [192, 545, 218, 527], [294, 506, 320, 487], [396, 527, 424, 505], [486, 474, 510, 458], [570, 509, 603, 484], [898, 532, 928, 514]],
+    craters: [[125, 556, 18], [278, 555, 13], [468, 540, 16], [650, 535, 20], [915, 556, 17]],
+  },
+  {
+    name: 'CRATER RIM',
+    sector: '11-C',
+    padName: 'PAD 07',
+    gravity: 39,
+    gravityDisplay: '1.86',
+    fuel: 88,
+    fuelBurnRate: 17,
+    start: { x: 805, y: 92 },
+    scoreBonus: 1500,
+    landing: { left: 430, right: 560, y: 468, horizontal: 46, vertical: 66, angle: 0.18, tolerance: '± 10°' },
+    terrain: [
+      { x: 0, y: 512 }, { x: 72, y: 478 }, { x: 140, y: 530 }, { x: 214, y: 502 },
+      { x: 282, y: 430 }, { x: 350, y: 500 }, { x: 430, y: 468 }, { x: 560, y: 468 },
+      { x: 620, y: 520 }, { x: 690, y: 446 }, { x: 760, y: 505 }, { x: 850, y: 458 }, { x: GAME_WIDTH, y: 500 },
+    ],
+    ridges: [[47, 526, 74, 505], [174, 545, 202, 523], [240, 486, 269, 455], [315, 523, 343, 506], [590, 540, 614, 516], [674, 483, 700, 459], [805, 530, 834, 500]],
+    craters: [[112, 554, 16], [254, 553, 20], [387, 548, 13], [650, 555, 18], [904, 548, 21]],
+  },
+  {
+    name: 'DARK SIDE',
+    sector: '19-F',
+    padName: 'PAD 12',
+    gravity: 44,
+    gravityDisplay: '2.11',
+    fuel: 78,
+    fuelBurnRate: 19,
+    start: { x: 470, y: 86 },
+    scoreBonus: 2200,
+    landing: { left: 780, right: 900, y: 455, horizontal: 40, vertical: 58, angle: 0.14, tolerance: '± 8°' },
+    terrain: [
+      { x: 0, y: 500 }, { x: 74, y: 530 }, { x: 130, y: 455 }, { x: 210, y: 510 },
+      { x: 285, y: 424 }, { x: 350, y: 505 }, { x: 425, y: 468 }, { x: 500, y: 530 },
+      { x: 580, y: 445 }, { x: 650, y: 515 }, { x: 720, y: 405 }, { x: 780, y: 455 },
+      { x: 900, y: 455 }, { x: GAME_WIDTH, y: 510 },
+    ],
+    ridges: [[38, 518, 64, 528], [151, 490, 178, 474], [239, 535, 265, 502], [323, 534, 347, 515], [456, 500, 483, 521], [602, 486, 630, 501], [704, 454, 733, 419]],
+    craters: [[102, 555, 18], [245, 555, 15], [396, 550, 21], [612, 550, 15], [942, 552, 18]],
+  },
+]
 
 document.querySelector('#app').innerHTML = `
   <div class="mission-shell">
@@ -31,7 +87,7 @@ document.querySelector('#app').innerHTML = `
         <div class="deck-heading">
           <div>
             <p class="section-kicker">LIVE NAVIGATION FEED</p>
-            <h2>LOWLAND APPROACH <span>/</span> PAD 03</h2>
+            <h2><span id="level-name">LOWLAND APPROACH</span> <span>/</span> <span id="pad-name">PAD 03</span></h2>
           </div>
           <div class="coordinate-readout">
             <span>SECTOR</span>
@@ -51,7 +107,7 @@ document.querySelector('#app').innerHTML = `
             </div>
             <button id="result-button" class="primary-action" type="button">
               <span class="button-glyph" aria-hidden="true">&#8635;</span>
-              <span>RETRY DESCENT</span>
+              <span id="result-button-label">RETRY DESCENT</span>
             </button>
           </div>
         </div>
@@ -86,7 +142,7 @@ document.querySelector('#app').innerHTML = `
             <p class="section-kicker">ONBOARD TELEMETRY</p>
             <h2>DESCENT DATA</h2>
           </div>
-          <span class="panel-index">01</span>
+          <span id="level-index" class="panel-index">LEVEL 1 / 3</span>
         </div>
 
         <div class="mission-state-row">
@@ -145,9 +201,9 @@ document.querySelector('#app').innerHTML = `
     </main>
 
     <footer class="site-footer">
-      <span>GRAVITY 1.62 M/S²</span>
+      <span>GRAVITY <strong id="gravity-readout">1.62 M/S²</strong></span>
       <span class="footer-rule"></span>
-      <span>PAD TOLERANCE <strong>± 3.0 DEG</strong></span>
+      <span>ATTITUDE TOLERANCE <strong id="tolerance-readout">± 13°</strong></span>
       <span class="footer-rule"></span>
       <span>MANUAL GUIDANCE</span>
     </footer>
@@ -156,6 +212,12 @@ document.querySelector('#app').innerHTML = `
 
 const hud = {
   status: document.querySelector('#flight-status'),
+  levelName: document.querySelector('#level-name'),
+  padName: document.querySelector('#pad-name'),
+  sector: document.querySelector('.coordinate-readout strong'),
+  levelIndex: document.querySelector('#level-index'),
+  gravity: document.querySelector('#gravity-readout'),
+  tolerance: document.querySelector('#tolerance-readout'),
   missionState: document.querySelector('#mission-state'),
   missionNote: document.querySelector('#mission-note'),
   launchButton: document.querySelector('#launch-button'),
@@ -171,6 +233,7 @@ const hud = {
   resultKicker: document.querySelector('#result-kicker'),
   resultTitle: document.querySelector('#result-title'),
   resultDetail: document.querySelector('#result-detail'),
+  resultButtonLabel: document.querySelector('#result-button-label'),
   resultScore: document.querySelector('#result-score'),
   resultFuel: document.querySelector('#result-fuel'),
 }
@@ -206,13 +269,13 @@ const stateCopy = {
   },
 }
 
-function setMissionState(state) {
+function setMissionState(state, buttonOverride = null) {
   const copy = stateCopy[state]
   hud.status.textContent = copy.status
   hud.missionState.textContent = copy.mission
   hud.missionNote.textContent = copy.note
   hud.currentLog.textContent = copy.log
-  hud.launchLabel.textContent = copy.button
+  hud.launchLabel.textContent = buttonOverride || copy.button
   hud.launchButton.disabled = state === 'playing'
   hud.launchButton.classList.toggle('is-disabled', state === 'playing')
 }
@@ -233,20 +296,8 @@ class LanderScene extends Phaser.Scene {
     this.elapsed = 0
     this.lastThrustParticle = 0
     this.particles = []
-    this.terrainPoints = [
-      { x: 0, y: 520 },
-      { x: 90, y: 498 },
-      { x: 160, y: 530 },
-      { x: 250, y: 470 },
-      { x: 350, y: 510 },
-      { x: 440, y: 435 },
-      { x: 530, y: 490 },
-      { x: 620, y: 455 },
-      { x: PAD_LEFT, y: PAD_Y },
-      { x: PAD_RIGHT, y: PAD_Y },
-      { x: 885, y: 510 },
-      { x: GAME_WIDTH, y: 486 },
-    ]
+    this.levelIndex = 0
+    this.level = null
 
     this.background = this.add.graphics()
     this.terrainGraphics = this.add.graphics()
@@ -261,20 +312,36 @@ class LanderScene extends Phaser.Scene {
       color: index % 9 === 0 ? 0xb7e9d0 : 0x8aaeb1,
     }))
 
-    this.drawWorld()
-    this.add.text(28, 24, 'SECTOR 07 // DESCENT', {
+    this.sectorText = this.add.text(28, 24, '', {
       color: '#9ac4b5',
       fontFamily: 'DM Mono, Consolas, monospace',
       fontSize: '12px',
       letterSpacing: 2,
     })
-    this.add.text(PAD_LEFT + 8, PAD_Y - 34, 'PAD 03', {
+    this.padText = this.add.text(0, 0, '', {
       color: '#8cf1c7',
       fontFamily: 'DM Mono, Consolas, monospace',
       fontSize: '11px',
       letterSpacing: 1,
     })
 
+    this.loadLevel(this.levelIndex)
+  }
+
+  loadLevel(levelIndex) {
+    this.levelIndex = Phaser.Math.Clamp(levelIndex, 0, LEVELS.length - 1)
+    this.level = LEVELS[this.levelIndex]
+    this.terrainPoints = this.level.terrain.map((point) => ({ ...point }))
+    this.sectorText.setText(`SECTOR ${this.level.sector} // DESCENT`)
+    this.padText.setText(this.level.padName)
+    this.padText.setPosition(this.level.landing.left + 8, this.level.landing.y - 34)
+    hud.levelName.textContent = this.level.name
+    hud.padName.textContent = this.level.padName
+    hud.sector.textContent = this.level.sector
+    hud.levelIndex.textContent = `LEVEL ${this.levelIndex + 1} / ${LEVELS.length}`
+    hud.gravity.textContent = `${this.level.gravityDisplay} M/S²`
+    hud.tolerance.textContent = this.level.landing.tolerance
+    this.drawWorld()
     this.resetFlight()
   }
 
@@ -324,55 +391,43 @@ class LanderScene extends Phaser.Scene {
     terrain.strokePath()
 
     terrain.lineStyle(1, 0x36595a, 0.7)
-    ;[
-      [68, 532, 91, 514],
-      [192, 545, 218, 527],
-      [294, 506, 320, 487],
-      [396, 527, 424, 505],
-      [486, 474, 510, 458],
-      [570, 509, 603, 484],
-      [898, 532, 928, 514],
-    ].forEach(([x1, y1, x2, y2]) => terrain.lineBetween(x1, y1, x2, y2))
+    this.level.ridges.forEach(([x1, y1, x2, y2]) => terrain.lineBetween(x1, y1, x2, y2))
+    this.level.craters.forEach(([x, y, radius]) => terrain.strokeCircle(x, y, radius))
 
-    ;[
-      [125, 556, 18],
-      [278, 555, 13],
-      [468, 540, 16],
-      [650, 535, 20],
-      [915, 556, 17],
-    ].forEach(([x, y, radius]) => terrain.strokeCircle(x, y, radius))
-
+    const { landing } = this.level
+    const padCenter = (landing.left + landing.right) / 2
     terrain.lineStyle(12, 0x5ce5b2, 0.12)
-    terrain.lineBetween(PAD_LEFT, PAD_Y, PAD_RIGHT, PAD_Y)
+    terrain.lineBetween(landing.left, landing.y, landing.right, landing.y)
     terrain.lineStyle(4, 0x8cf1c7, 1)
-    terrain.lineBetween(PAD_LEFT, PAD_Y, PAD_RIGHT, PAD_Y)
+    terrain.lineBetween(landing.left, landing.y, landing.right, landing.y)
     terrain.lineStyle(1, 0xb0f7d2, 0.85)
-    terrain.lineBetween(PAD_LEFT + 18, PAD_Y + 8, PAD_LEFT + 18, PAD_Y + 19)
-    terrain.lineBetween(PAD_RIGHT - 18, PAD_Y + 8, PAD_RIGHT - 18, PAD_Y + 19)
+    terrain.lineBetween(landing.left + 18, landing.y + 8, landing.left + 18, landing.y + 19)
+    terrain.lineBetween(landing.right - 18, landing.y + 8, landing.right - 18, landing.y + 19)
 
     const guides = this.guideGraphics
     guides.clear()
     guides.lineStyle(1, 0x6bd6b2, 0.24)
-    guides.lineBetween(PAD_CENTER, PAD_Y - 126, PAD_CENTER, PAD_Y - 12)
-    guides.lineBetween(PAD_CENTER - 38, PAD_Y - 98, PAD_CENTER - 38, PAD_Y - 12)
-    guides.lineBetween(PAD_CENTER + 38, PAD_Y - 98, PAD_CENTER + 38, PAD_Y - 12)
+    guides.lineBetween(padCenter, landing.y - 126, padCenter, landing.y - 12)
+    guides.lineBetween(padCenter - 38, landing.y - 98, padCenter - 38, landing.y - 12)
+    guides.lineBetween(padCenter + 38, landing.y - 98, padCenter + 38, landing.y - 12)
     guides.lineStyle(1, 0x8cf1c7, 0.75)
-    guides.lineBetween(PAD_CENTER - 5, PAD_Y - 126, PAD_CENTER + 5, PAD_Y - 126)
-    guides.lineBetween(PAD_CENTER - 5, PAD_Y - 126, PAD_CENTER, PAD_Y - 119)
-    guides.lineBetween(PAD_CENTER + 5, PAD_Y - 126, PAD_CENTER, PAD_Y - 119)
+    guides.lineBetween(padCenter - 5, landing.y - 126, padCenter + 5, landing.y - 126)
+    guides.lineBetween(padCenter - 5, landing.y - 126, padCenter, landing.y - 119)
+    guides.lineBetween(padCenter + 5, landing.y - 126, padCenter, landing.y - 119)
   }
 
   resetFlight() {
     this.state = 'ready'
     this.ship = {
-      x: 174,
-      y: 112,
+      x: this.level.start.x,
+      y: this.level.start.y,
       vx: 0,
       vy: 0,
       angle: 0,
-      fuel: 100,
+      fuel: this.level.fuel,
       thrusting: false,
     }
+    this.lastThrustParticle = 0
     this.particles.length = 0
     this.touchControls.clear()
     this.hideResult()
@@ -383,7 +438,10 @@ class LanderScene extends Phaser.Scene {
 
   startFlight() {
     if (this.state === 'playing') return
-    if (this.state === 'landed' || this.state === 'crashed') this.resetFlight()
+    if (this.state === 'landed') {
+      const nextLevel = this.levelIndex === LEVELS.length - 1 ? 0 : this.levelIndex + 1
+      this.loadLevel(nextLevel)
+    } else if (this.state === 'crashed') this.resetFlight()
     this.state = 'playing'
     setMissionState(this.state)
   }
@@ -429,7 +487,7 @@ class LanderScene extends Phaser.Scene {
       const thrustPower = 92
       this.ship.vx += Math.sin(this.ship.angle) * thrustPower * dt
       this.ship.vy -= Math.cos(this.ship.angle) * thrustPower * dt
-      this.ship.fuel = Math.max(0, this.ship.fuel - 15 * dt)
+      this.ship.fuel = Math.max(0, this.ship.fuel - this.level.fuelBurnRate * dt)
       this.lastThrustParticle += dt
       if (this.lastThrustParticle > 0.026) {
         this.emitThrustParticle()
@@ -439,7 +497,7 @@ class LanderScene extends Phaser.Scene {
       this.lastThrustParticle = 0
     }
 
-    this.ship.vy += 34 * dt
+    this.ship.vy += this.level.gravity * dt
     this.ship.vx *= Math.pow(0.999, dt * 60)
     this.ship.x += this.ship.vx * dt
     this.ship.y += this.ship.vy * dt
@@ -470,11 +528,12 @@ class LanderScene extends Phaser.Scene {
 
   resolveImpact() {
     this.ship.y = this.groundYAt(this.ship.x) - 24
-    const safeLanding = this.ship.x >= PAD_LEFT + 10
-      && this.ship.x <= PAD_RIGHT - 10
-      && Math.abs(this.ship.vx) <= 52
-      && Math.abs(this.ship.vy) <= 72
-      && Math.abs(this.ship.angle) <= 0.22
+    const { landing } = this.level
+    const safeLanding = this.ship.x >= landing.left + 10
+      && this.ship.x <= landing.right - 10
+      && Math.abs(this.ship.vx) <= landing.horizontal
+      && Math.abs(this.ship.vy) <= landing.vertical
+      && Math.abs(this.ship.angle) <= landing.angle
 
     if (safeLanding) this.land()
     else {
@@ -490,7 +549,16 @@ class LanderScene extends Phaser.Scene {
     this.ship.thrusting = false
     for (let index = 0; index < 32; index += 1) this.emitBurstParticle(0x8cf1c7)
     setMissionState(this.state)
-    this.showResult('DESCENT COMPLETE', 'Touchdown confirmed. Pad 03 has a stable signal.', 'TOUCHDOWN', Math.round(1000 + this.ship.fuel * 10))
+    const isFinalLevel = this.levelIndex === LEVELS.length - 1
+    const actionLabel = isFinalLevel ? 'PLAY AGAIN' : 'NEXT LEVEL'
+    setMissionState(this.state, actionLabel)
+    this.showResult(
+      isFinalLevel ? 'MISSION COMPLETE' : 'LEVEL COMPLETE',
+      `${this.level.name} secured. ${this.level.padName} has a stable signal.`,
+      isFinalLevel ? 'CAMPAIGN COMPLETE' : 'TOUCHDOWN',
+      Math.round(this.level.scoreBonus + this.ship.fuel * 10),
+      actionLabel,
+    )
   }
 
   crash(reason) {
@@ -500,13 +568,14 @@ class LanderScene extends Phaser.Scene {
     this.ship.thrusting = false
     for (let index = 0; index < 26; index += 1) this.emitBurstParticle(0xff8b6f)
     setMissionState(this.state)
-    this.showResult('SIGNAL LOST', `${reason}. The lander did not survive the approach.`, 'FLIGHT ABORTED', 0)
+    this.showResult('SIGNAL LOST', `${reason}. The lander did not survive the approach.`, 'FLIGHT ABORTED', 0, 'RETRY DESCENT')
   }
 
-  showResult(title, detail, kicker, score) {
+  showResult(title, detail, kicker, score, actionLabel) {
     hud.resultKicker.textContent = kicker
     hud.resultTitle.textContent = title
     hud.resultDetail.textContent = detail
+    hud.resultButtonLabel.textContent = actionLabel
     hud.resultScore.textContent = String(score).padStart(4, '0')
     hud.resultFuel.textContent = `${Math.round(this.ship.fuel).toString().padStart(2, '0')}%`
     hud.resultOverlay.classList.remove('is-hidden')
@@ -667,10 +736,7 @@ const getScene = () => game.scene.getScene('LanderScene')
 
 hud.launchButton.addEventListener('click', () => getScene().startFlight())
 document.querySelector('#reset-button').addEventListener('click', () => getScene().resetFlight())
-document.querySelector('#result-button').addEventListener('click', () => {
-  getScene().resetFlight()
-  getScene().startFlight()
-})
+document.querySelector('#result-button').addEventListener('click', () => getScene().startFlight())
 
 document.querySelectorAll('[data-control]').forEach((button) => {
   const control = button.dataset.control

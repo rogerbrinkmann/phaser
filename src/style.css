@@ -229,6 +229,10 @@ kbd {
   font-weight: 400;
 }
 
+.deck-heading h2 #level-name {
+  color: var(--ink);
+}
+
 .coordinate-readout {
   flex-direction: column;
   align-items: flex-end;
