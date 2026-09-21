@@ -362,6 +362,14 @@ kbd {
   background: var(--line);
 }
 
+.deck-launch-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 18px;
+  border-top: 1px solid var(--line);
+  background: rgba(8, 24, 27, 0.72);
+}
+
 .control-button {
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -640,9 +648,8 @@ kbd {
   line-height: 1;
 }
 
-.primary-action--wide {
-  width: calc(100% - 36px);
-  margin: 0 18px 18px;
+.primary-action--deck {
+  min-width: 210px;
 }
 
 .site-footer {
@@ -706,8 +713,7 @@ kbd {
 
   .panel-heading,
   .mission-state-row,
-  .telemetry-log,
-  .primary-action--wide {
+  .telemetry-log {
     grid-column: 1 / -1;
   }
 
@@ -766,6 +772,15 @@ kbd {
     justify-content: center;
     gap: 3px;
     padding: 7px 3px;
+  }
+
+  .deck-launch-row {
+    justify-content: stretch;
+    padding: 10px;
+  }
+
+  .primary-action--deck {
+    width: 100%;
   }
 
   .control-caption {

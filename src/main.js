@@ -139,6 +139,13 @@ document.querySelector('#app').innerHTML = `
             <kbd>R</kbd>
           </button>
         </div>
+
+        <div class="deck-launch-row">
+          <button id="launch-button" class="primary-action primary-action--deck" type="button">
+            <span class="button-glyph" aria-hidden="true">&#9650;</span>
+            <span id="launch-label">LAUNCH DESCENT</span>
+          </button>
+        </div>
       </section>
 
       <aside class="telemetry-panel" aria-label="Flight telemetry">
@@ -198,10 +205,6 @@ document.querySelector('#app').innerHTML = `
           <div class="log-entry"><span class="log-status"></span><span id="log-current">Awaiting descent burn</span><time>NOW</time></div>
         </div>
 
-        <button id="launch-button" class="primary-action primary-action--wide" type="button">
-          <span class="button-glyph" aria-hidden="true">&#9650;</span>
-          <span id="launch-label">LAUNCH DESCENT</span>
-        </button>
       </aside>
     </main>
 
