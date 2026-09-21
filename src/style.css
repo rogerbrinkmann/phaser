@@ -1,0 +1,756 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  --bg: #061014;
+  --surface: #0a191d;
+  --surface-raised: #0d2023;
+  --line: rgba(118, 164, 157, 0.23);
+  --line-bright: rgba(140, 241, 199, 0.48);
+  --ink: #e3eee7;
+  --muted: #78918f;
+  --muted-bright: #a4bab2;
+  --mint: #8cf1c7;
+  --amber: #ffbf69;
+  --coral: #ff8b76;
+  --display: 'Space Grotesk', 'Trebuchet MS', sans-serif;
+  --mono: 'DM Mono', Consolas, monospace;
+  color: var(--ink);
+  background: var(--bg);
+  font-family: var(--mono);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100svh;
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 50% 110%, rgba(35, 93, 72, 0.2), transparent 45%),
+    linear-gradient(140deg, #07151a 0%, #061014 55%, #0a1c1e 100%);
+  color: var(--ink);
+}
+
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(112, 166, 155, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(112, 166, 155, 0.035) 1px, transparent 1px);
+  background-size: 46px 46px;
+  content: '';
+  pointer-events: none;
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 3px;
+}
+
+#app {
+  min-height: 100svh;
+}
+
+.mission-shell {
+  width: min(1320px, 100%);
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: 34px 34px 22px;
+}
+
+.site-header,
+.site-footer,
+.deck-heading,
+.panel-heading,
+.flight-status,
+.brand-lockup,
+.coordinate-readout,
+.fuel-heading,
+.log-heading,
+.log-entry,
+.flight-note {
+  display: flex;
+  align-items: center;
+}
+
+.site-header {
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand-lockup {
+  gap: 13px;
+}
+
+.brand-mark {
+  position: relative;
+  display: inline-grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--mint);
+  border-radius: 50%;
+  transform: rotate(-24deg);
+}
+
+.brand-mark::before,
+.brand-mark::after {
+  position: absolute;
+  width: 48px;
+  height: 15px;
+  border: 1px solid rgba(140, 241, 199, 0.6);
+  border-radius: 50%;
+  content: '';
+}
+
+.brand-mark::after {
+  width: 6px;
+  height: 6px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--amber);
+}
+
+.brand-mark span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mint);
+}
+
+.brand-eyebrow,
+.section-kicker,
+.readout-label,
+.fuel-heading,
+.log-heading,
+.site-footer,
+.coordinate-readout,
+.flight-status,
+.control-caption,
+kbd {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.4px;
+}
+
+.brand-eyebrow,
+.section-kicker {
+  margin: 0 0 4px;
+  color: var(--muted);
+}
+
+.brand-lockup h1,
+.deck-heading h2,
+.panel-heading h2,
+.result-overlay h2 {
+  margin: 0;
+  font-family: var(--display);
+  letter-spacing: 0;
+}
+
+.brand-lockup h1 {
+  color: var(--ink);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.flight-status {
+  gap: 10px;
+  color: var(--muted-bright);
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 0 4px rgba(140, 241, 199, 0.11), 0 0 15px rgba(140, 241, 199, 0.8);
+}
+
+.status-divider,
+.footer-rule {
+  width: 1px;
+  height: 14px;
+  background: var(--line);
+}
+
+.mission-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 286px;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.flight-deck,
+.telemetry-panel {
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: rgba(8, 24, 27, 0.84);
+}
+
+.flight-deck {
+  overflow: hidden;
+}
+
+.deck-heading,
+.panel-heading {
+  justify-content: space-between;
+  min-height: 76px;
+  padding: 17px 19px;
+  border-bottom: 1px solid var(--line);
+}
+
+.deck-heading h2,
+.panel-heading h2 {
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.deck-heading h2 span {
+  color: var(--mint);
+  font-weight: 400;
+}
+
+.coordinate-readout {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  color: var(--muted);
+}
+
+.coordinate-readout strong {
+  color: var(--mint);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.game-frame {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #071318;
+}
+
+#game,
+#game canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.result-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(4, 16, 18, 0.82);
+  text-align: center;
+  backdrop-filter: blur(4px);
+  transition: opacity 180ms ease, visibility 180ms ease;
+}
+
+.result-overlay.is-hidden {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.result-kicker {
+  margin: 0 0 9px;
+  color: var(--mint);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.result-overlay h2 {
+  color: var(--ink);
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.result-overlay > p:not(.result-kicker) {
+  max-width: 360px;
+  margin: 12px 0 20px;
+  color: var(--muted-bright);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.result-stats {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 22px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.result-stats strong {
+  margin-left: 5px;
+  color: var(--amber);
+  font-weight: 500;
+}
+
+.control-dock {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  border-top: 1px solid var(--line);
+  background: var(--line);
+}
+
+.control-button {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  min-height: 64px;
+  padding: 8px 13px;
+  border: 0;
+  border-radius: 0;
+  background: var(--surface-raised);
+  color: var(--muted-bright);
+  cursor: pointer;
+  touch-action: none;
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.control-button:hover,
+.control-button.is-active {
+  background: #123033;
+  color: var(--mint);
+}
+
+.control-button--thrust .control-glyph {
+  color: var(--amber);
+}
+
+.control-button--reset {
+  color: var(--muted);
+}
+
+.control-glyph {
+  font-family: var(--display);
+  font-size: 23px;
+  line-height: 1;
+}
+
+.control-caption {
+  overflow: hidden;
+  color: inherit;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+kbd {
+  min-width: 19px;
+  padding: 4px 4px 3px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1;
+  text-align: center;
+}
+
+.telemetry-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-heading {
+  min-height: 76px;
+}
+
+.panel-index {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.mission-state-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 1.3px;
+}
+
+.mission-state-row strong {
+  color: var(--mint);
+  font-size: 9px;
+  font-weight: 500;
+  text-align: right;
+}
+
+.readout-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-bottom: 1px solid var(--line);
+}
+
+.readout-cell {
+  min-height: 83px;
+  padding: 15px 17px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.readout-cell:nth-child(odd) {
+  border-right: 1px solid var(--line);
+}
+
+.readout-cell:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.readout-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 8px;
+  letter-spacing: 1.1px;
+  white-space: nowrap;
+}
+
+.readout-cell strong {
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.readout-cell small {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 0.6px;
+}
+
+.fuel-block {
+  padding: 17px 18px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.fuel-heading {
+  justify-content: space-between;
+  margin-bottom: 11px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.fuel-heading strong {
+  color: var(--amber);
+  font-weight: 500;
+}
+
+.fuel-track {
+  height: 5px;
+  overflow: hidden;
+  background: #193338;
+}
+
+.fuel-track span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--amber);
+  box-shadow: 0 0 12px rgba(255, 191, 105, 0.55);
+  transition: width 120ms linear;
+}
+
+.fuel-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 8px;
+  letter-spacing: 0.8px;
+}
+
+.flight-note {
+  gap: 10px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.note-mark {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--mint);
+  box-shadow: 0 0 0 3px rgba(140, 241, 199, 0.08);
+}
+
+.flight-note strong {
+  display: block;
+  color: var(--muted-bright);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+}
+
+.telemetry-log {
+  flex: 1;
+  padding: 16px 18px 18px;
+}
+
+.log-heading {
+  justify-content: space-between;
+  margin-bottom: 13px;
+  color: var(--muted);
+  font-size: 8px;
+  letter-spacing: 1.2px;
+}
+
+.log-entry {
+  gap: 8px;
+  min-height: 25px;
+  color: var(--muted-bright);
+  font-size: 9px;
+  line-height: 1.3;
+}
+
+.log-entry time {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.log-status {
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #3b5a5a;
+}
+
+.log-status--ready {
+  background: var(--mint);
+  box-shadow: 0 0 8px rgba(140, 241, 199, 0.65);
+}
+
+.primary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--mint);
+  border-radius: 2px;
+  background: var(--mint);
+  color: #08201b;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.1px;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.primary-action:hover {
+  border-color: #c4ffe4;
+  background: #c4ffe4;
+}
+
+.primary-action:disabled,
+.primary-action.is-disabled {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--muted);
+  cursor: default;
+}
+
+.button-glyph {
+  font-family: var(--display);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.primary-action--wide {
+  width: calc(100% - 36px);
+  margin: 0 18px 18px;
+}
+
+.site-footer {
+  justify-content: center;
+  gap: 15px;
+  min-height: 54px;
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 1.1px;
+}
+
+.site-footer strong {
+  color: var(--muted-bright);
+  font-weight: 500;
+}
+
+@media (max-width: 980px) {
+  .mission-shell {
+    padding: 24px 22px 18px;
+  }
+
+  .mission-layout {
+    grid-template-columns: minmax(0, 1fr) 250px;
+  }
+
+  .control-button {
+    padding-inline: 9px;
+  }
+
+  .control-caption {
+    letter-spacing: 0.8px;
+  }
+}
+
+@media (max-width: 780px) {
+  .mission-shell {
+    padding: 18px 14px 12px;
+  }
+
+  .site-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 18px;
+  }
+
+  .flight-status {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .mission-layout {
+    grid-template-columns: 1fr;
+    margin-top: 14px;
+  }
+
+  .telemetry-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .panel-heading,
+  .mission-state-row,
+  .telemetry-log,
+  .primary-action--wide {
+    grid-column: 1 / -1;
+  }
+
+  .panel-heading {
+    min-height: 66px;
+  }
+
+  .mission-state-row {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .readout-grid {
+    border-right: 1px solid var(--line);
+  }
+
+  .fuel-block,
+  .flight-note {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .telemetry-log {
+    min-height: 134px;
+  }
+
+  .site-footer {
+    flex-wrap: wrap;
+    gap: 9px 12px;
+    padding: 12px 0;
+    text-align: center;
+  }
+}
+
+@media (max-width: 500px) {
+  .brand-lockup h1 {
+    font-size: 24px;
+  }
+
+  .deck-heading,
+  .panel-heading {
+    padding-inline: 14px;
+  }
+
+  .deck-heading h2,
+  .panel-heading h2 {
+    font-size: 15px;
+  }
+
+  .coordinate-readout {
+    display: none;
+  }
+
+  .control-button {
+    display: flex;
+    min-height: 56px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    padding: 7px 3px;
+  }
+
+  .control-caption {
+    font-size: 7px;
+    letter-spacing: 0.8px;
+  }
+
+  kbd {
+    display: none;
+  }
+
+  .result-overlay h2 {
+    font-size: 31px;
+  }
+
+  .result-stats {
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .telemetry-panel {
+    display: block;
+  }
+
+  .readout-grid {
+    border-right: 0;
+  }
+}
