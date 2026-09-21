@@ -537,8 +537,22 @@ class LanderScene extends Phaser.Scene {
 
     if (safeLanding) this.land()
     else {
-      const reason = Math.abs(this.ship.vy) > 72 ? 'VERTICAL VELOCITY EXCEEDED' : 'LANDING ATTITUDE UNSTABLE'
-      this.crash(reason)
+      const reasons = []
+      if (this.ship.x < landing.left + 10 || this.ship.x > landing.right - 10) {
+        reasons.push('LANDING PAD MISSED')
+      }
+      if (Math.abs(this.ship.vx) > landing.horizontal) {
+        reasons.push('HORIZONTAL VELOCITY EXCEEDED')
+      }
+      if (Math.abs(this.ship.vy) > landing.vertical) {
+        reasons.push('VERTICAL VELOCITY EXCEEDED')
+      }
+      if (Math.abs(this.ship.angle) > landing.angle) {
+        const actualAngle = Math.round(Math.abs(Phaser.Math.RadToDeg(this.ship.angle)))
+        const allowedAngle = Math.round(Phaser.Math.RadToDeg(landing.angle))
+        reasons.push(`ATTITUDE ${actualAngle}° / LIMIT ${allowedAngle}°`)
+      }
+      this.crash(reasons.join(' / ') || 'LANDING PARAMETERS OUT OF RANGE')
     }
   }
 
