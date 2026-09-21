@@ -105,6 +105,11 @@ document.querySelector('#app').innerHTML = `
               <span>FLIGHT SCORE <strong id="result-score">0000</strong></span>
               <span>FUEL REMAINING <strong id="result-fuel">00%</strong></span>
             </div>
+            <div class="score-breakdown" aria-label="Flight score breakdown">
+              <div class="score-row"><span>LEVEL COMPLETION</span><strong id="result-level-bonus">+0000</strong></div>
+              <div class="score-row"><span>FUEL PRESERVED</span><strong id="result-fuel-bonus">+0000</strong></div>
+              <div class="score-row score-row--total"><span>TOTAL AWARDED</span><strong id="result-total">0000</strong></div>
+            </div>
             <button id="result-button" class="primary-action" type="button">
               <span class="button-glyph" aria-hidden="true">&#8635;</span>
               <span id="result-button-label">RETRY DESCENT</span>
@@ -236,6 +241,9 @@ const hud = {
   resultButtonLabel: document.querySelector('#result-button-label'),
   resultScore: document.querySelector('#result-score'),
   resultFuel: document.querySelector('#result-fuel'),
+  resultLevelBonus: document.querySelector('#result-level-bonus'),
+  resultFuelBonus: document.querySelector('#result-fuel-bonus'),
+  resultTotal: document.querySelector('#result-total'),
 }
 
 const stateCopy = {
@@ -558,8 +566,6 @@ class LanderScene extends Phaser.Scene {
 
   land() {
     this.state = 'landed'
-    this.ship.vx = 0
-    this.ship.vy = 0
     this.ship.thrusting = false
     for (let index = 0; index < 32; index += 1) this.emitBurstParticle(0x8cf1c7)
     setMissionState(this.state)
@@ -572,6 +578,7 @@ class LanderScene extends Phaser.Scene {
       isFinalLevel ? 'CAMPAIGN COMPLETE' : 'TOUCHDOWN',
       Math.round(this.level.scoreBonus + this.ship.fuel * 10),
       actionLabel,
+      { levelBonus: this.level.scoreBonus, fuelBonus: Math.round(this.ship.fuel * 10) },
     )
   }
 
@@ -582,16 +589,19 @@ class LanderScene extends Phaser.Scene {
     this.ship.thrusting = false
     for (let index = 0; index < 26; index += 1) this.emitBurstParticle(0xff8b6f)
     setMissionState(this.state)
-    this.showResult('SIGNAL LOST', `${reason}. The lander did not survive the approach.`, 'FLIGHT ABORTED', 0, 'RETRY DESCENT')
+    this.showResult('SIGNAL LOST', `${reason}. The lander did not survive the approach.`, 'FLIGHT ABORTED', 0, 'RETRY DESCENT', { levelBonus: 0, fuelBonus: 0 })
   }
 
-  showResult(title, detail, kicker, score, actionLabel) {
+  showResult(title, detail, kicker, score, actionLabel, breakdown) {
     hud.resultKicker.textContent = kicker
     hud.resultTitle.textContent = title
     hud.resultDetail.textContent = detail
     hud.resultButtonLabel.textContent = actionLabel
     hud.resultScore.textContent = String(score).padStart(4, '0')
     hud.resultFuel.textContent = `${Math.round(this.ship.fuel).toString().padStart(2, '0')}%`
+    hud.resultLevelBonus.textContent = `+${String(breakdown.levelBonus).padStart(4, '0')}`
+    hud.resultFuelBonus.textContent = `+${String(breakdown.fuelBonus).padStart(4, '0')}`
+    hud.resultTotal.textContent = String(score).padStart(4, '0')
     hud.resultOverlay.classList.remove('is-hidden')
   }
 
